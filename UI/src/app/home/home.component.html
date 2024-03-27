@@ -3,3 +3,18 @@
 <p>{{ username }}</p>
 <button (click)="getUsername()">Click Me</button>
 <button (click)="getUsers()">Click Me For Users</button>
+
+<hr />
+
+<input type="file" (change)="onSpecFileSelected($event)" />
+<button (click)="submitSpecFile()">Submit Spec File</button>
+
+<hr />
+
+<input type="file" (change)="onFlatFileSelected($event)" />
+<button (click)="submitFlatFile()">Submit Flat File</button>
+
+<hr />
+
+<button (click)="submitMerge()">MERGE FILES!!!</button>
+<p *ngIf=""></p>
