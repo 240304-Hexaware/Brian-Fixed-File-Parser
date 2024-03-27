@@ -1,0 +1,31 @@
+<button (click)="onLogout()">Logout!</button>
+<h1>Angular Router App</h1>
+
+<nav>
+  <ul>
+    <li>
+      <a
+        routerLink="/home"
+        routerLinkActive="active"
+        ariaCurrentWhenActive="page"
+        >home</a
+      >
+    </li>
+    <li *ngIf="isAdmin">
+      <a
+        routerLink="/admin"
+        routerLinkActive="active"
+        ariaCurrentWhenActive="page"
+        >admin</a
+      >
+    </li>
+    <li>
+      <a
+        routerLink="/auth"
+        routerLinkActive="active"
+        ariaCurrentWhenActive="page"
+        >auth</a
+      >
+    </li>
+  </ul>
+</nav>

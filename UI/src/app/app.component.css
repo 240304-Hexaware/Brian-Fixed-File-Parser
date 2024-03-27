@@ -1,0 +1,31 @@
+mat-toolbar {
+  padding: 0 10%;
+}
+
+.app-name {
+  font-weight: 500;
+  margin-right: 20px;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.nav-links a {
+  margin-right: 10px; /* Or any space you find visually pleasing */
+}
+
+.nav-links mat-icon {
+  margin-right: 5px; /* To give some space between icon and text */
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .nav-links {
+    display: none; /* hides nav links on smaller screens */
+  }
+  .app-name {
+    flex: 1 1 auto; /* centers app name on smaller screens */
+  }
+  /* You can add a menu toggle button here */
+}
