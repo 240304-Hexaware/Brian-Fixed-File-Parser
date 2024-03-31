@@ -2,7 +2,7 @@ package com.github.budget.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import com.github.budget.domain.User;
+import com.github.budget.entity.User;
 import com.github.budget.repository.UserRepository;
 
 import java.util.Optional;

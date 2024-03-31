@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.github.budget.domain.User;
+import com.github.budget.entity.User;
 import com.github.budget.repository.UserRepository;
 
 import java.util.ArrayList;

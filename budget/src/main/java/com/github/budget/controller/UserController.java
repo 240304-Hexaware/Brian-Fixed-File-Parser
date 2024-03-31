@@ -3,16 +3,12 @@ package com.github.budget.controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.github.budget.domain.User;
+import com.github.budget.entity.User;
 import com.github.budget.service.UserService;
-
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.http.ResponseEntity;
 
 @RestController()
 class UserController {
@@ -23,14 +19,13 @@ class UserController {
     }
 
     @GetMapping("/users")
-    @ResponseStatus(HttpStatus.OK)
-    public List<User> getUsers() {
-        return userService.getUsers();
+    public ResponseEntity<List<User>> getUsers() {
+        return ResponseEntity.ok(userService.getUsers());
     }
 
-    @PostMapping("/users")
-    public User registerUser(@RequestBody User user) {
-        return userService.registerUser(user);
-    }
-
+    // @PostMapping("/users")
+    // public ResponseEntity<User> registerUser(@RequestBody User user) {
+    // User newUser = userService.registerUser(user);
+    // return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+    // }
 }

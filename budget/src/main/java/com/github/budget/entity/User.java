@@ -1,4 +1,4 @@
-package com.github.budget.domain;
+package com.github.budget.entity;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;

@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.budget.domain.FlatFile;
-import com.github.budget.domain.SpecFile;
+import com.github.budget.entity.FlatFile;
+import com.github.budget.entity.SpecFile;
 
 @Service
 public class FileService {

@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
-import com.github.budget.domain.SpecFile;
+import com.github.budget.entity.SpecFile;
 
 @Repository
 public interface SpecFileRepository extends MongoRepository<SpecFile, Object> {

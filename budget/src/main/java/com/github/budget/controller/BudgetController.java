@@ -15,5 +15,4 @@ public class BudgetController {
     public String monthlyBudget() {
         return "Remaining budget for the month: $5000.00";
     }
-
 }
