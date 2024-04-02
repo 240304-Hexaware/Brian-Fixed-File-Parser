@@ -20,6 +20,7 @@ import com.github.budget.repository.FlatFileRepository;
 import com.github.budget.repository.SpecFileRepository;
 import com.github.budget.security.SecurityUtils;
 import com.github.budget.service.FileService;
+import com.github.budget.constants.Constant;
 
 @RestController
 public class FilesController {
@@ -32,46 +33,28 @@ public class FilesController {
   @Autowired
   FileService fileService;
 
-  @PostMapping("/flatfiles")
+  @PostMapping("/specfiles")
   public ResponseEntity<String> handleSpecFileUpload(@RequestParam("file") MultipartFile file) {
-    // create folder for each user /files/{username}
-    String destinationPath = "/Users/shadow/Workstation/Revature/Brian-Project/budget/src/main/resources/"
-        + file.getOriginalFilename();
-    File destFile = new File(destinationPath);
+    String fileType = "spec";
 
     try {
-      file.transferTo(destFile);
-      FlatFile flatFile = new FlatFile();
-      flatFile.setFilename(file.getOriginalFilename());
-      flatFile.setFiletype(file.getContentType());
-      flatFile.setPath(destinationPath);
-      flatFile.setUsername(SecurityUtils.getCurrentUsername());
-      flatFileRepository.save(flatFile);
+      String result = fileService.saveFileToBlockStorage(file, fileType);
 
-      return ResponseEntity.ok("File uploaded successfully");
+      return ResponseEntity.ok(result);
     } catch (IOException e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Could not save file");
     }
   }
 
-  @PostMapping("/specfiles")
-  public ResponseEntity<String> handleFixedFileUpload(@RequestParam("file") MultipartFile file) {
-    // create folder for each user /files/{username}
-    String destinationPath = "/Users/shadow/Workstation/Revature/Brian-Project/budget/src/main/resources/"
-        + file.getOriginalFilename();
-    File destFile = new File(destinationPath);
+  @PostMapping("/flatfiles")
+  public ResponseEntity<String> handleFlatFileUpload(@RequestParam("file") MultipartFile file) {
+
+    String fileType = "flat";
 
     try {
-      file.transferTo(destFile);
-      SpecFile specFile = new SpecFile();
-      specFile.setFilename(file.getOriginalFilename());
-      specFile.setFiletype(file.getContentType());
-      specFile.setPath(destinationPath);
-      specFile.setUsername(SecurityUtils.getCurrentUsername());
-      specFile.setSchema(fileService.JSONtoSpec(destinationPath));
-      specFileRepository.save(specFile);
+      String result = fileService.saveFileToBlockStorage(file, fileType);
 
-      return ResponseEntity.ok("File uploaded successfully");
+      return ResponseEntity.ok(result);
     } catch (IOException e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Could not save file");
     }
