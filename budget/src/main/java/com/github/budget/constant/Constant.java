@@ -1,4 +1,4 @@
-package com.github.budget.constants;
+package com.github.budget.constant;
 
 public interface Constant {
 

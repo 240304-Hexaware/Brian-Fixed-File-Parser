@@ -17,11 +17,11 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SpecFile {
-    public @MongoId ObjectId id;
-    public String filename;
-    public String filetype;
-    public String path;
-    public String username;
-    public org.bson.Document schema;
-
+    private @MongoId ObjectId id;
+    private String filename;
+    private String filetype;
+    private String path;
+    private String username;
+    private org.bson.Document schema;
+    private RecordsData recordsData;
 }

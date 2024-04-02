@@ -5,18 +5,24 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.bson.Document;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.budget.constants.Constant;
+import com.github.budget.constant.Constant;
+import com.github.budget.dto.RecordsDto;
 import com.github.budget.entity.FlatFile;
+import com.github.budget.entity.RecordsData;
 import com.github.budget.entity.SpecFile;
+import com.github.budget.mapper.RecordsDataMapper;
 import com.github.budget.repository.FlatFileRepository;
 import com.github.budget.repository.SpecFileRepository;
 import com.github.budget.security.SecurityUtils;
@@ -30,36 +36,73 @@ public class FileService {
     FlatFileRepository flatFileRepository;
     SpecFileRepository specFileRepository;
 
-    public String saveFileToBlockStorage(MultipartFile file, String type) throws IllegalStateException, IOException {
+    public ResponseEntity<List<SpecFile>> getSpecFiles() {
+        return ResponseEntity.ok(specFileRepository.findAll());
+    }
+
+    public String saveSpecFileToBlockStorage(MultipartFile file)
+            throws IllegalStateException, IOException {
 
         String destinationPath = Constant.FILE_DIR + file.getOriginalFilename();
         File destFile = new File(destinationPath);
 
         file.transferTo(destFile);
 
-        if (type.equals("flat")) {
-            FlatFile flatFile = new FlatFile();
-            flatFile.setFilename(file.getOriginalFilename());
-            flatFile.setFiletype(file.getContentType());
-            flatFile.setPath(destinationPath);
-            flatFile.setUsername(SecurityUtils.getCurrentUsername());
-            flatFileRepository.save(flatFile);
-        }
-        if (type.equals("spec")) {
-            SpecFile specFile = new SpecFile();
-            specFile.setFilename(file.getOriginalFilename());
-            specFile.setFiletype(file.getContentType());
-            specFile.setPath(destinationPath);
-            specFile.setUsername(SecurityUtils.getCurrentUsername());
-            specFile.setSchema(JSONtoSpec(destinationPath));
-            specFileRepository.save(specFile);
-        }
-
-        return type + " file uploaded successfully at " + destinationPath;
+        SpecFile specFile = new SpecFile();
+        specFile.setFilename(file.getOriginalFilename());
+        specFile.setFiletype(file.getContentType());
+        specFile.setPath(destinationPath);
+        specFile.setUsername(SecurityUtils.getCurrentUsername());
+        specFile.setSchema(JSONtoSpec(destinationPath));
+        specFileRepository.save(specFile);
+        return "Saved spec file to " + destinationPath + " successfully";
 
     }
 
-    public Document parseFixedLengthFile(FlatFile flatFile, SpecFile specFile) throws IOException {
+    public RecordsDto saveFlatFileToBlockStorage(MultipartFile file, String specFileName)
+            throws IllegalStateException, IOException {
+
+        String destinationPath = Constant.FILE_DIR + file.getOriginalFilename();
+        File destFile = new File(destinationPath);
+
+        file.transferTo(destFile);
+
+        FlatFile flatFile = new FlatFile();
+        flatFile.setFilename(file.getOriginalFilename());
+        flatFile.setFiletype(file.getContentType());
+        flatFile.setPath(destinationPath);
+        flatFile.setUsername(SecurityUtils.getCurrentUsername());
+        flatFileRepository.save(flatFile);
+
+        return mergeFiles(flatFile, specFileName);
+
+    }
+
+    public RecordsDto mergeFiles(FlatFile flatFile, String specFileName) throws IOException {
+
+        Optional<SpecFile> optionalSpecFile = specFileRepository.findByFilename(specFileName);
+
+        if (optionalSpecFile.isEmpty()) {
+            // add exception handling
+            return null;
+        }
+        SpecFile specFile = optionalSpecFile.get();
+
+        Document parsedRecords = parseFixedLengthFile(flatFile, specFile);
+
+        RecordsData recordsData = new RecordsData();
+        recordsData.setRecords(parsedRecords);
+
+        specFile.setRecordsData(recordsData);
+        specFileRepository.save(specFile);
+
+        RecordsDto recordsDto = RecordsDataMapper.mapToRecordsDTO(specFile, new RecordsDto());
+
+        return recordsDto;
+    }
+
+    public Document parseFixedLengthFile(FlatFile flatFile, SpecFile specFile)
+            throws IOException {
         Document spec = specFile.getSchema();
         Document data = new Document();
         int index = 0;
