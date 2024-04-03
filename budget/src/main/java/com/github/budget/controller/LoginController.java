@@ -4,6 +4,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.github.budget.entity.User;
 import com.github.budget.repository.UserRepository;
+import com.github.budget.service.AuthService;
+
+import lombok.AllArgsConstructor;
 
 import java.util.Optional;
 
@@ -15,50 +18,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
+@AllArgsConstructor
 public class LoginController {
 
-    private final UserRepository userRepository;
-    private PasswordEncoder passwordEncoder;
-
-    public LoginController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+    private AuthService authService;
 
     @PostMapping("/register")
     public ResponseEntity<User> registerUser(@RequestBody User user) {
-        ResponseEntity<User> response = null;
-        try {
-            if (userRepository.findByUsername(user.getUsername()).isEmpty()) {
-                User newUser = new User();
-                newUser.setUsername(user.getUsername());
-                newUser.setPassword(passwordEncoder.encode(user.getPassword()));
-                newUser.setRole("ROLE_USER");
-
-                userRepository.save(newUser);
-                response = ResponseEntity
-                        .status(HttpStatus.CREATED)
-                        .body(newUser);
-            }
-        } catch (Exception e) {
-            response = ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(null);
-        }
-        return response;
+        return authService.registerUser(user);
     }
 
     @PostMapping("/signin")
     public ResponseEntity<User> loginUser(Authentication authentication) {
-        Optional<User> user = userRepository.findByUsername(authentication.getName());
-        ResponseEntity<User> response = null;
-        if (user.isPresent()) {
-            response = ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(user.get());
-            return response;
-        } else {
-            return null;
-        }
+        return authService.loginUser(authentication);
     }
 }

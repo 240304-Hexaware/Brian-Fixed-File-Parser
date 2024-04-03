@@ -50,7 +50,7 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public User registerUser(User newUser) {
+    public User createUser(User newUser) {
         String username = newUser.getUsername();
         if (userRepository.existsByUsername(username) == false) {
             User user = new User();

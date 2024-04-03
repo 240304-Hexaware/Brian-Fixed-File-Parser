@@ -1,4 +1,8 @@
 admin can group by user, date, or spec
+need to add dtos for each of the endpoints
+add validation?
+add documentation with openapi?
+spring config?
 
 move complexity down
 general names
