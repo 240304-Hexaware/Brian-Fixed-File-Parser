@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,6 +31,12 @@ public class FlatFilesController {
         RecordsDto recordsDto = recordsDataService.createRecords(storedFlatFile, specFileName);
 
         return ResponseEntity.status(HttpStatus.OK).body(recordsDto);
+    }
+
+    @DeleteMapping("/flatfiles")
+    public ResponseEntity<String> deleteFlatFile(@RequestParam("filename") String filename) {
+        fileService.deleteFlatFile(filename);
+        return ResponseEntity.ok("Flat file deleted");
     }
 
 }

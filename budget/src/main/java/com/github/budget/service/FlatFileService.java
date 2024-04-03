@@ -2,6 +2,8 @@ package com.github.budget.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,6 +37,23 @@ public class FlatFileService {
         flatFileRepository.save(flatFile);
 
         return flatFile;
+    }
+
+    public boolean deleteFlatFile(String filename) {
+        Optional<FlatFile> flatFile = flatFileRepository.findByFilename(filename);
+        if (flatFile.isEmpty()) {
+            return false;
+        }
+
+        FlatFile flat = flatFile.get();
+        File file = new File(flat.getPath());
+
+        // deletes file from disk
+        file.delete();
+
+        flatFileRepository.deleteByFilename(filename);
+
+        return true;
     }
 
 }

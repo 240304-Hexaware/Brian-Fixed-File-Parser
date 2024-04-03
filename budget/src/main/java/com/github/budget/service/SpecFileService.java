@@ -68,11 +68,17 @@ public class SpecFileService {
 
     public boolean deleteSpecFile(String filename) {
         Optional<SpecFile> specFile = specFileRepository.findByFilename(filename);
+        if (specFile.isEmpty()) {
+            return false;
+        }
 
         SpecFile spec = specFile.get();
         File file = new File(spec.getPath());
+
+        // deletes file from disk
         file.delete();
-        specFileRepository.deleteById(spec.getId());
+
+        specFileRepository.deleteByFilename(filename);
 
         return true;
     }

@@ -11,4 +11,5 @@ import com.github.budget.entity.SpecFile;
 public interface SpecFileRepository extends MongoRepository<SpecFile, Object> {
     Optional<SpecFile> findByFilename(String filename);
 
+    void deleteByFilename(String filename);
 }

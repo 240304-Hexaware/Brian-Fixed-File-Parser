@@ -13,4 +13,6 @@ public interface FlatFileRepository extends MongoRepository<FlatFile, Object> {
   Optional<FlatFile> findByFilename(String filename);
 
   Optional<FlatFile> findBySpecFileId(ObjectId specFileId);
+
+  void deleteByFilename(String filename);
 }
