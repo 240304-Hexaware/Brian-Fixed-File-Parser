@@ -1,6 +1,5 @@
 package com.github.budget.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,16 +11,17 @@ import org.springframework.stereotype.Service;
 import com.github.budget.entity.User;
 import com.github.budget.repository.UserRepository;
 
+import lombok.AllArgsConstructor;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class UserService implements UserDetailsService {
 
-    @Autowired
     private UserRepository userRepository;
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Override
@@ -61,6 +61,25 @@ public class UserService implements UserDetailsService {
             return userRepository.save(user);
         } else {
             throw new UsernameNotFoundException("User already exists");
+        }
+    }
+
+    public User updateUser(User user) {
+        String username = user.getUsername();
+        if (userRepository.existsByUsername(username) == true) {
+            return userRepository.save(user);
+        } else {
+            throw new UsernameNotFoundException("User not found");
+        }
+    }
+
+    public User deleteUser(User user) {
+        String username = user.getUsername();
+        if (userRepository.existsByUsername(username) == true) {
+            userRepository.delete(user);
+            return user;
+        } else {
+            throw new UsernameNotFoundException("User not found");
         }
     }
 }

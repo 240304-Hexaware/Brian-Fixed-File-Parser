@@ -1,6 +1,10 @@
 package com.github.budget.entity;
 
 import org.bson.types.ObjectId;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
@@ -19,9 +23,19 @@ import lombok.ToString;
 public class SpecFile {
     private @MongoId ObjectId id;
     private String filename;
-    private String filetype;
     private String path;
-    private String username;
+    private String filetype;
     private org.bson.Document schema;
-    private RecordsData recordsData;
+
+    @CreatedBy
+    private String createdBy;
+
+    @CreatedDate
+    private String createdAt;
+
+    @LastModifiedDate
+    private String updatedAt;
+
+    @LastModifiedBy
+    private String updatedBy;
 }

@@ -1,3 +1,5 @@
+admin can group by user, date, or spec
+
 move complexity down
 general names
 print json representation of file inputted

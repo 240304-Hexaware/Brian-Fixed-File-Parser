@@ -1,6 +1,10 @@
 package com.github.budget.entity;
 
 import org.bson.types.ObjectId;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
@@ -21,8 +25,18 @@ public class FlatFile {
     private String filename;
     private String filetype;
     private String path;
-    private String username;
-    private String specFileId;
-    private org.bson.Document data;
+    private ObjectId specFileId;
+
+    @CreatedBy
+    private String createdBy;
+
+    @CreatedDate
+    private String createdAt;
+
+    @LastModifiedDate
+    private String updatedAt;
+
+    @LastModifiedBy
+    private String updatedBy;
 
 }
