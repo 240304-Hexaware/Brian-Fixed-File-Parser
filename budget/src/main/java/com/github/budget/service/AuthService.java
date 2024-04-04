@@ -8,7 +8,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.github.budget.dto.request.UserRequestDto;
+import com.github.budget.dto.response.UserResponseDto;
 import com.github.budget.entity.User;
+import com.github.budget.exception.ResourceNotFoundException;
+import com.github.budget.exception.UserAlreadyExistsException;
+import com.github.budget.mapper.UserMapper;
 import com.github.budget.repository.UserRepository;
 
 import lombok.AllArgsConstructor;
@@ -19,40 +24,26 @@ public class AuthService {
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
 
-    public ResponseEntity<User> registerUser(User user) {
+    public void registerUser(UserRequestDto userDto) {
+        User user = UserMapper.mapToUser(userDto);
 
-        ResponseEntity<User> response = null;
-        try {
-            if (userRepository.findByUsername(user.getUsername()).isEmpty()) {
-                User newUser = new User();
-                newUser.setUsername(user.getUsername());
-                newUser.setPassword(passwordEncoder.encode(user.getPassword()));
-                newUser.setRole("ROLE_USER");
-
-                userRepository.save(newUser);
-                response = ResponseEntity
-                        .status(HttpStatus.CREATED)
-                        .body(newUser);
-            }
-        } catch (Exception e) {
-            response = ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(null);
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            throw new UserAlreadyExistsException("User with username " + user.getUsername() + " already exists");
         }
-        return response;
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole("ROLE_USER");
+
+        userRepository.save(user);
     }
 
-    public ResponseEntity<User> loginUser(Authentication authentication) {
+    public UserResponseDto loginUser(Authentication authentication) {
         Optional<User> user = userRepository.findByUsername(authentication.getName());
-        ResponseEntity<User> response = null;
-        if (user.isPresent()) {
-            response = ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(user.get());
-            return response;
-        } else {
-            return null;
+        if (user.isEmpty()) {
+            throw new ResourceNotFoundException("User", "username", authentication.getName());
         }
+
+        return UserMapper.mapToUserResponseDto(user.get());
     }
 
 }

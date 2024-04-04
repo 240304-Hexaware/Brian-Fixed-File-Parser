@@ -11,7 +11,7 @@ import java.util.Optional;
 import org.bson.Document;
 import org.springframework.stereotype.Service;
 
-import com.github.budget.dto.RecordsDto;
+import com.github.budget.dto.response.RecordsResponseDto;
 import com.github.budget.entity.FlatFile;
 import com.github.budget.entity.RecordsData;
 import com.github.budget.mapper.RecordsDataMapper;
@@ -26,18 +26,20 @@ public class RecordsDataService {
     SpecFileService specFileService;
     RecordsDataRepository recordsDataRepository;
 
-    public RecordsDto createRecords(FlatFile flatFile, String specFileName) throws IOException {
+    public RecordsResponseDto createRecords(FlatFile flatFile, String specFileName) throws IOException {
 
         Document schema = specFileService.getSpecFileSchemaByFilename(specFileName);
 
         Document parsedRecords = parseFixedLengthFile(flatFile, schema);
 
+        // Create RecordsData object
         RecordsData recordsData = new RecordsData();
         recordsData.setRecords(parsedRecords);
         recordsData.setSpecFileId(specFileService.getSpecFileIdByFilename(specFileName));
+        recordsData.setFlatFileId(flatFile.getId());
         recordsDataRepository.save(recordsData);
 
-        RecordsDto recordsDto = RecordsDataMapper.mapToRecordsDTO(recordsData, new RecordsDto());
+        RecordsResponseDto recordsDto = RecordsDataMapper.mapToRecordsDTO(recordsData, new RecordsResponseDto());
 
         return recordsDto;
     }
@@ -46,25 +48,25 @@ public class RecordsDataService {
         return recordsDataRepository.findAll();
     }
 
-    public RecordsDto getRecordsByUsername(String username) {
+    public RecordsResponseDto getRecordsByUsername(String username) {
         Optional<RecordsData> recordsData = recordsDataRepository.findByCreatedBy(username);
 
-        return RecordsDataMapper.mapToRecordsDTO(recordsData.get(), new RecordsDto());
+        return RecordsDataMapper.mapToRecordsDTO(recordsData.get(), new RecordsResponseDto());
     }
 
     public Document parseFixedLengthFile(FlatFile flatFile, Document schema)
             throws IOException {
-        Document data = new Document();
+        Document records = new Document();
         int index = 0;
         try (BufferedReader reader = new BufferedReader(new FileReader(flatFile.getPath()))) {
             String record;
             while ((record = reader.readLine()) != null) {
                 Map<String, String> parsedRecord = parseLine(record, schema);
 
-                data.put(String.valueOf(index++), new Document(parsedRecord));
+                records.put(String.valueOf(index++), new Document(parsedRecord));
             }
         }
-        return data;
+        return records;
     }
 
     private Map<String, String> parseLine(String line, Document spec) {

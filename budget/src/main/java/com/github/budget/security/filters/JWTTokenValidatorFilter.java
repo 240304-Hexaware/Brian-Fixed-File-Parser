@@ -22,7 +22,8 @@ import java.nio.charset.StandardCharsets;
 public class JWTTokenValidatorFilter extends OncePerRequestFilter {
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+    protected void doFilterInternal(HttpServletRequest request,
+            HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
         String jwt = request.getHeader(Constants.JWT_HEADER);
         if (null != jwt) {
@@ -35,7 +36,9 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
                         .build()
                         .parseSignedClaims(jwt)
                         .getPayload();
+
                 String username = String.valueOf(claims.get("username"));
+
                 String authorities = (String) claims.get("authorities");
                 Authentication auth = new UsernamePasswordAuthenticationToken(username, null,
                         AuthorityUtils.commaSeparatedStringToAuthorityList(authorities));

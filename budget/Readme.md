@@ -1,4 +1,6 @@
+have everything needed in RecordData
 admin can group by user, date, or spec
+add authorization to the endpoints (admin, user)
 need to add dtos for each of the endpoints
 add validation?
 add documentation with openapi?

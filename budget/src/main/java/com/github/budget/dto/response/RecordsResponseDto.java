@@ -1,4 +1,4 @@
-package com.github.budget.dto;
+package com.github.budget.dto.response;
 
 import org.bson.Document;
 
@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RecordsDto {
+public class RecordsResponseDto {
     private Document records;
 }
