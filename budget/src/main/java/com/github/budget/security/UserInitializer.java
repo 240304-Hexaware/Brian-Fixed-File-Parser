@@ -7,18 +7,17 @@ import org.springframework.stereotype.Component;
 import com.github.budget.entity.User;
 import com.github.budget.repository.UserRepository;
 
+import lombok.AllArgsConstructor;
+
 @Component
+@AllArgsConstructor
 public class UserInitializer {
 
-    @Autowired
     private UserRepository userRepository;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @jakarta.annotation.PostConstruct
     public void initData() {
-        // Check if the admin user already exists to avoid creating multiple admin users
         String adminUsername = "admin";
         if (userRepository.existsByUsername(adminUsername) == false) {
             User adminUser = new User();

@@ -4,7 +4,7 @@ import { AuthComponent } from './auth/auth.component';
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from './auth/auth.service';
 import { CommonModule } from '@angular/common';
-import { HeaderComponent } from './header/header.component';
+import { NavComponent } from './nav/nav.component';
 
 @Component({
   selector: 'app-root',
@@ -18,7 +18,7 @@ import { HeaderComponent } from './header/header.component';
     RouterLinkActive,
     AuthComponent,
     HomeComponent,
-    HeaderComponent,
+    NavComponent,
   ],
 })
 export class AppComponent implements OnInit {

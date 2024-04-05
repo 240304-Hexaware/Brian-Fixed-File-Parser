@@ -41,18 +41,19 @@ export class AuthComponent {
       authObs = this.authService.signup(username, password);
     }
 
-    authObs.subscribe(
-      (resData) => {
+    authObs.subscribe({
+      next: (resData) => {
         console.log(resData);
         this.isLoading = false;
         this.router.navigate(['/home']);
       },
-      (errorMessage) => {
+      error: (errorMessage) => {
         console.log(errorMessage);
         this.error = errorMessage;
         this.isLoading = false;
-      }
-    );
+      },
+      complete: () => {},
+    });
 
     form.reset();
   }

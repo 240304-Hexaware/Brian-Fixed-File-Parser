@@ -1,6 +1,6 @@
 package com.github.budget.dto.response;
 
-import org.bson.Document;
+import java.util.Map;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RecordsResponseDto {
-    private Document records;
+    private String id;
+    private Map<String, String> data;
 }

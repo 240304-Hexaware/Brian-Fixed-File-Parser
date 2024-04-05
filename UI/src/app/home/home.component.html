@@ -1,20 +1,121 @@
 <p>home works!</p>
 
-<p>{{ username }}</p>
-<button (click)="getUsername()">Click Me</button>
-<button (click)="getUsers()">Click Me For Users</button>
+<p>Current logged in user: {{ username }}</p>
 
 <hr />
-
+<h3>SpecFiles</h3>
 <input type="file" (change)="onSpecFileSelected($event)" />
 <button (click)="submitSpecFile()">Submit Spec File</button>
+<br />
+<button (click)="fetchSpecFiles()">Get All Spec Files</button>
+<button (click)="fetchSpecFilesForUser()">Get Spec Files For User</button>
+<!-- <p>Spec Files:</p>
+<pre>{{ specFiles | json }}</pre> -->
+
+<!-- Create a table for specfiles. each header will be the keys and rows will be records -->
+<div *ngIf="specFiles.length > 0">
+  <table>
+    <thead>
+      <tr>
+        <th *ngFor="let key of Object.keys(specFiles[0])">{{ key }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let specFile of specFiles">
+        <td *ngFor="let key of Object.keys(specFile)">{{ specFile[key] }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
 <hr />
-
+<h3>FlatFiles</h3>
 <input type="file" (change)="onFlatFileSelected($event)" />
-<button (click)="submitFlatFile()">Submit Flat File</button>
+<button (click)="submitFlatFile(specFileSelect.value)">Submit Flat File</button>
+<!-- Dropdown for SpecFile Names -->
+<label for="specFileSelect"> Select a Spec File: </label>
+<select id="specFileSelect" #specFileSelect>
+  <option *ngFor="let specFile of specFiles" [value]="specFile.fileName">
+    {{ specFile.fileName }}
+  </option>
+</select>
+
+<!-- Will have input type of dropdown for each specfile available -->
+
+<br />
+<button (click)="fetchFlatFiles()">Get All Flat Files</button>
+<button (click)="fetchFlatFilesForUser()">Get Flat Files For User</button>
+
+<!-- Create a table for specfiles. each header will be the keys and rows will be records -->
+<div *ngIf="flatFiles.length > 0">
+  <table>
+    <thead>
+      <tr>
+        <th *ngFor="let key of Object.keys(flatFiles[0])">{{ key }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let flatFile of flatFiles">
+        <td *ngFor="let key of Object.keys(flatFile)">{{ flatFile[key] }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
 <hr />
+<h3>Records</h3>
 
-<button (click)="submitMerge()">MERGE FILES!!!</button>
-<p *ngIf=""></p>
+<button (click)="fetchRecordsForUser()">Get Records for user</button>
+<button (click)="fetchRecords()">Get all Records</button>
+<p>Records:</p>
+<pre>{{ records | json }}</pre>
+
+<label for="specFileRecords"> Select a Spec File: </label>
+<select id="specFileRecords" #specFileRecordsSelect>
+  <option *ngFor="let specFile of specFiles" [value]="specFile.fileName">
+    {{ specFile.fileName }}
+  </option>
+</select>
+<button (click)="fetchRecordsBySpecName(specFileRecordsSelect.value)">
+  Get Records For Spec File
+</button>
+
+<select id="recordsViewSelect" #recordsViewSelect>
+  <option value="spec">spec</option>
+  <option value="flat">flat</option>
+  <option value="user">user</option>
+</select>
+<button (click)="setView(recordsViewSelect.value)">Modify Records</button>
+
+<br />
+<input type="text" #recordToDelete />
+<button (click)="deleteRecord(recordToDelete.value)">Delete Record</button>
+
+<hr />
+<h3>User management</h3>
+
+<h4>Get all users</h4>
+<button (click)="fetchAllUsers()">Click Me For Users</button>
+<p>Users:</p>
+<pre>{{ users | json }}</pre>
+
+<h4>Delete a user</h4>
+<input type="text" #userToDelete />
+<button (click)="deleteUser(userToDelete.value)">Delete User</button>
+
+<h4>Search a user</h4>
+<input type="text" #userToSearch />
+<button (click)="searchUser(userToSearch.value)">Search User</button>
+<p>Search Result:</p>
+<pre>{{ searchedUser | json }}</pre>
+
+<h4>Change a user's role</h4>
+<p>Select User</p>
+<input type="text" #userToChangeRole />
+<p>Select Role</p>
+<input type="text" #newRole />
+<button (click)="updateUserRole(userToChangeRole.value, newRole.value)">
+  Change Role
+</button>
+
+<hr />

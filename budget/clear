@@ -1,10 +1,12 @@
 mongosh "mongodb://<admin>:<password123>@localhost:27017/test" --eval "db.flat_files.deleteMany({})"
 mongosh "mongodb://<admin>:<password123>@localhost:27017/test" --eval "db.spec_files.deleteMany({})"
 mongosh "mongodb://<admin>:<password123>@localhost:27017/test" --eval "db.records_data.deleteMany({})"
+mongosh "mongodb://<admin>:<password123>@localhost:27017/test" --eval "db.users.deleteMany({})"
 
 mongosh "mongodb://<admin>:<password123>@localhost:27017/test" --eval "db.spec_files.find()"
 mongosh "mongodb://<admin>:<password123>@localhost:27017/test" --eval "db.flat_files.find()"
 mongosh "mongodb://<admin>:<password123>@localhost:27017/test" --eval "db.records_data.find()"
+mongosh "mongodb://<admin>:<password123>@localhost:27017/test" --eval "db.users.find()"
 
 
 

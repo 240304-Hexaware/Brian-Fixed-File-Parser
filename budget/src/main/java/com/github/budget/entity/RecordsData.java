@@ -1,5 +1,7 @@
 package com.github.budget.entity;
 
+import java.util.Map;
+
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -15,7 +17,7 @@ public class RecordsData {
 
     @Id
     private String id;
-    private org.bson.Document records;
+    private Map<String, String> data;
     private String specFileId;
     private String flatFileId;
 

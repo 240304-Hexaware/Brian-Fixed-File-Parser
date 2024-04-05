@@ -4,13 +4,13 @@ import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-header',
+  selector: 'app-nav',
   standalone: true,
   imports: [RouterModule, CommonModule],
-  templateUrl: './header.component.html',
-  styleUrl: './header.component.css',
+  templateUrl: './nav.component.html',
+  styleUrl: './nav.component.css',
 })
-export class HeaderComponent {
+export class NavComponent {
   isAdmin = false;
   constructor(private authService: AuthService) {}
 

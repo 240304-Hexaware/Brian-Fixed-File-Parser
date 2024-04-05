@@ -3,8 +3,6 @@ import {
   HttpInterceptor,
   HttpRequest,
   HttpHandler,
-  HttpParams,
-  HttpHeaders,
 } from '@angular/common/http';
 import { take, exhaustMap } from 'rxjs/operators';
 

@@ -1,5 +1,6 @@
 package com.github.budget.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -11,7 +12,9 @@ import com.github.budget.entity.FlatFile;
 public interface FlatFileRepository extends MongoRepository<FlatFile, String> {
   Optional<FlatFile> findByFilename(String filename);
 
-  Optional<FlatFile> findBySpecFileId(String specFileId);
+  Optional<List<FlatFile>> findBySpecFileId(String specFileId);
+
+  Optional<List<FlatFile>> findByCreatedBy(String username);
 
   void deleteByFilename(String filename);
 }

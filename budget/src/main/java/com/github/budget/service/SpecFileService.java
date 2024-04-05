@@ -8,15 +8,19 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.bson.Document;
-import org.springframework.http.ResponseEntity;
+import org.springframework.boot.autoconfigure.rsocket.RSocketProperties.Server.Spec;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.budget.constant.Constant;
-import com.github.budget.dto.request.SpecFileRequestDto;
 import com.github.budget.dto.response.SpecFileResponseDto;
+import com.github.budget.entity.FlatFile;
 import com.github.budget.entity.SpecFile;
+import com.github.budget.exception.ResourceNotFoundException;
 import com.github.budget.mapper.SpecFileMapper;
 import com.github.budget.repository.SpecFileRepository;
 
@@ -26,6 +30,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class SpecFileService {
     SpecFileRepository specFileRepository;
+    MongoTemplate mongoTemplate;
 
     public List<SpecFileResponseDto> getSpecFiles() {
         List<SpecFile> specFiles = specFileRepository.findAll();
@@ -44,59 +49,63 @@ public class SpecFileService {
         specFile.setFilename(file.getOriginalFilename());
         specFile.setFiletype(file.getContentType());
         specFile.setPath(destinationPath);
-        // upload file to disk
+        // // upload file to disk
         file.transferTo(destFile);
-        // read file and convert to json
+        // // read file and convert to json
         specFile.setSchema(fileJsonToSpec(destinationPath));
-        specFileRepository.save(specFile);
+        mongoTemplate.insert(specFile);
 
     }
 
     public List<SpecFileResponseDto> getSpecFilesByUsername(String username) {
 
-        Optional<List<SpecFile>> specFiles = specFileRepository.findByCreatedBy(username);
-        if (specFiles.isEmpty()) {
-            return Collections.emptyList();
-        }
-        return specFiles.get().stream()
-                .map(SpecFileMapper::mapToSpecFileDto)
-                .collect(Collectors.toList());
+        Query query = new Query();
+        query.addCriteria(Criteria.where("createdBy").is(username));
+        List<SpecFile> list = mongoTemplate.find(query, SpecFile.class);
+        return list.stream().map(SpecFileMapper::mapToSpecFileDto).collect(Collectors.toList());
     }
 
-    public boolean deleteSpecFile(String filename) {
+    public void deleteSpecFile(String filename) {
+
         Optional<SpecFile> specFile = specFileRepository.findByFilename(filename);
-        if (specFile.isEmpty()) {
-            return false;
-        }
 
         SpecFile spec = specFile.get();
         File file = new File(spec.getPath());
 
         // deletes file from disk
-        if (!file.delete())
-            return false;
+        file.delete();
 
         specFileRepository.deleteByFilename(filename);
 
-        return true;
     }
 
     public Document getSpecFileSchemaByFilename(String filename) {
-        Optional<SpecFile> specFile = specFileRepository.findByFilename(filename);
-
-        if (specFile.isEmpty()) {
-            return new Document();
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").is(filename));
+        SpecFile specFile = mongoTemplate.findOne(query, SpecFile.class);
+        if (specFile == null) {
+            throw new ResourceNotFoundException("SpecFile", "filename", filename);
         }
-        return specFile.get().getSchema();
+        return specFile.getSchema();
     }
 
     public String getSpecFileIdByFilename(String filename) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("filename").is(filename));
+        SpecFile specFile = mongoTemplate.findOne(query, SpecFile.class);
+        if (specFile == null) {
+            throw new ResourceNotFoundException("SpecFile", "filename", filename);
+        }
+        return specFile.getId();
+    }
+
+    public SpecFile getSpecFileByFilename(String filename) {
         Optional<SpecFile> specFile = specFileRepository.findByFilename(filename);
 
         if (specFile.isEmpty()) {
-            return null;
+            throw new ResourceNotFoundException("SpecFile", "filename", filename);
         }
-        return specFile.get().getId();
+        return specFile.get();
     }
 
     public Document fileJsonToSpec(String filePath) throws IOException {

@@ -2,8 +2,6 @@ package com.github.budget.service;
 
 import java.util.Optional;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -11,8 +9,8 @@ import org.springframework.stereotype.Service;
 import com.github.budget.dto.request.UserRequestDto;
 import com.github.budget.dto.response.UserResponseDto;
 import com.github.budget.entity.User;
+import com.github.budget.exception.ResourceAlreadyExistsException;
 import com.github.budget.exception.ResourceNotFoundException;
-import com.github.budget.exception.UserAlreadyExistsException;
 import com.github.budget.mapper.UserMapper;
 import com.github.budget.repository.UserRepository;
 
@@ -28,7 +26,7 @@ public class AuthService {
         User user = UserMapper.mapToUser(userDto);
 
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-            throw new UserAlreadyExistsException("User with username " + user.getUsername() + " already exists");
+            throw new ResourceAlreadyExistsException("User", "username", user.getUsername());
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
